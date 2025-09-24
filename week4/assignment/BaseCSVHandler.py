@@ -11,6 +11,7 @@ class BaseCSVHandler:
 
 # if __name__ == "__main__":
 #     p1 = BaseCSVHandler()
-#     data = p1.readCSVFile("S:/AI TL/VS Projects/learningPython/week4/assignment/country_wise_latest.csv")
+#     data = p1.readCSVFile("C:/Users/maheshwaran.mahesh.THEELIXRLABS/OneDrive - Elixr Labs/Documents/pythonLearning/learningPython/week4/assignment/country_wise_latest.csv")
 #     writeData = data.head()
+#     print(writeData)
 #     p1.writeCSVFile(writeData, "firstFive.csv")
