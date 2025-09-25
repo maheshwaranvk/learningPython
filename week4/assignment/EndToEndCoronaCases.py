@@ -26,3 +26,31 @@ NewCoronaCases = pd.DataFrame(rawCSVData.groupby('New cases').sum())
 (NewCoronaCases.sort_values('New cases', ascending=False)).head().to_csv("Top5NewCases.csv")
 
 DeathCasesDF = pd.DataFrame(DeathCases)
+#print(DeathCasesDF['Deaths'].idxmin(), ":", DeathCasesDF['Deaths'].min())
+
+#print(rawCSVData[rawCSVData['Country/Region']=='India'])
+
+ConfirmedCasesDF = pd.DataFrame(ConfirmedCases)
+#print([pd.DataFrame(DeathCasesDF),pd.DataFrame(ConfirmedCasesDF)])
+CFR = pd.DataFrame((DeathCasesDF['Deaths']/ConfirmedCasesDF['Confirmed'])*100)
+CFR=CFR.rename(columns={0:"CFR"})
+CFR.to_csv("CFR_Region.csv")
+
+#print(pd.DataFrame(RecoveredCases))
+
+groupByCountryAndRegion = rawCSVData.groupby(['WHO Region','Country/Region']).sum()
+groupByCountryAndRegion.to_csv("CountryRegionGrouped.csv")
+
+recoveredCasesGroup = rawCSVData.groupby('Recovered').sum()
+recoveredCasesGroupDF = pd.DataFrame(recoveredCasesGroup.reset_index())
+#rawCSVData[rawCSVData['Recovered']==0].reset_index(drop=True).to_csv("ReceoveredRates.csv")
+
+#print(rawCSVData['Active'].mean())
+#print(rawCSVData['Active'].std())
+
+startingOutliner = rawCSVData['Active'].mean()
+endingOutliner = 2*rawCSVData['Active'].std()
+lowerBound = startingOutliner-endingOutliner
+upperBound = startingOutliner+endingOutliner
+
+rawCSVData[(rawCSVData['Active']>lowerBound) & (rawCSVData['Active']<upperBound)].to_csv("ActiveOutliners.csv")
