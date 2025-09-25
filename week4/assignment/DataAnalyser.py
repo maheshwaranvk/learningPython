@@ -7,7 +7,7 @@ class DataAnalyser(BaseCSVHandler):
         super().__init__()
 
     def readPropertyFile(self):
-        with open("C:/Users/maheshwaran.mahesh.THEELIXRLABS/OneDrive - Elixr Labs/Documents/pythonLearning/learningPython/week4/assignment/config.properties",'r') as f:
+        with open("config.properties",'r') as f:
             for line in f:
                 if line and not line.startswith("#"):
                     key,value=line.split(":",1)
