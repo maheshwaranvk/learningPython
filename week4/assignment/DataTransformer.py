@@ -1,7 +1,7 @@
 from week4.assignment.BaseCSVHandler import BaseCSVHandler
 import pandas as pd
 
-class DataAnalyser(BaseCSVHandler):
+class DataTransformer(BaseCSVHandler):
     props = {}
     def __init__(self):
         super().__init__()
@@ -26,7 +26,6 @@ class DataAnalyser(BaseCSVHandler):
 
     def groupByFilters(self, groupByValue, method):
         readCsvData = self.readCSVFile(self.readPropertyFile()['csvFileLocation'])
-        #print(readCsvData.groupby(groupByValue).size())
         match method.lower():
             case "sum":
                 return readCsvData.groupby(groupByValue).sum()
