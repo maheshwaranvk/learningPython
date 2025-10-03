@@ -12,6 +12,9 @@ userList = [12342, 12112, 123, 12356, 12, 2321]
 
 #setting up width
 x = np.arange(len(languages))
+width = 0.25
+
+
 
 plt.bar(languages,popularity, color='b', width=0.25, label='Programming Language Popularity')
 plt.bar(languages,userList, color='g', width=0.5, label='Programming Language Popularity')
