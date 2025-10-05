@@ -169,4 +169,11 @@ if __name__=="__main__":
 #     obj1.regionsWithZeroRecoveredCases()
 
     obj2 = CoronaCaseVisualizer()
+    obj2.barChartForTop10CountriesConfirmedCases()
+    obj2.pieChartForGlobalDeathDisRegion()
+    obj2.lineChartComparingConfirmedAndDeathTop5Countries()
+    obj2.scatterPlotOfConfirmedRecovered()
+    obj2.histogramDeathCounts()
     obj2.stackedBarConfirmedDeathsRecoveredCases()
+    obj2.boxPlotConfirmedCases()
+    obj2.pandaPlotConfirmedCases()
