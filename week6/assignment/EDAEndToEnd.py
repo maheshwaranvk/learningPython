@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -46,7 +46,7 @@ cleanestData = rawCSVData.drop(outlierIndex)
 print(cleanestData)
 
 #4
-stdScalar = StandardScaler()
+stdScalar = RobustScaler()
 stdCleanedData = stdScalar.fit_transform(rawCSVData[['Confirmed','New cases']])
 print(stdCleanedData)
 
@@ -68,20 +68,19 @@ print(rawCSVData['Confirmed'])
 #     'afterScalarConfirmed' : stdCleaned_df['Confirmed_scaled']
 # })
 # print(df)
-
-fig, axes = plt.subplots(1, 2, figsize=(12, 10))
-sns.histplot(stdCleaned_df['Confirmed_scaled'], color='green', kde=True, stat='density', ax=axes[0])
-axes[0].set_title('Confirmed Cases Scaled')
-axes[0].set_xlim(-0.3, 2)
-sns.histplot(rawCSVData['Confirmed'], color='red', kde=True, stat='density', ax=axes[1])
-axes[1].set_title('Confirmed Cases')
+sns.histplot(stdCleaned_df['Confirmed_scaled'], color='green', kde=True, stat='density')
+# fig, axes = plt.subplots(1, 2, figsize=(12, 10))
+# sns.histplot(stdCleaned_df['Confirmed_scaled'], color='green', kde=True, stat='density', ax=axes[0])
+# axes[0].set_title('Confirmed Cases Scaled')
+# sns.histplot(rawCSVData['Confirmed'], color='red', kde=True, stat='density', ax=axes[1])
+# axes[1].set_title('Confirmed Cases')
 plt.show()
 
 
-fig, axes = plt.subplots(1, 2, figsize=(12, 10))
-sns.histplot(stdCleaned_df['New_cases_scaled'], color='green', kde=True, stat='density', ax=axes[0])
-axes[0].set_title('New Cases Scaled')
-axes[0].set_xlim(-0.3, 2)
-sns.histplot(rawCSVData['Confirmed'], color='red', kde=True, stat='density', ax=axes[1])
-axes[1].set_title('Confirmed Cases')
+# fig, axes = plt.subplots(1, 2, figsize=(12, 10))
+# sns.histplot(stdCleaned_df['New_cases_scaled'], color='green', kde=True, stat='density')#ax=axes[0])
+# #xes[0].set_title('New Cases Scaled')
+# #axes[0].set_xlim(-0.3, 0.3)
+# #sns.histplot(rawCSVData['Confirmed'], color='red', kde=True, stat='density', ax=axes[1])
+# #axes[1].set_title('Confirmed Cases')
 plt.show()
