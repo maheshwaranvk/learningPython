@@ -8,14 +8,14 @@ import seaborn as sns
 import logging
 
 rawData = pd.read_csv('Student_Performance.csv')
-model = LinearRegression()
 
 class StudentPerformanceModel:
 
     def __init__(self):
         self.scallingRequired = False
         self.cleanedData = pd.DataFrame()
-        self.scaledData = pd.DataFrame()
+        self.scaler = None
+        self.model = LinearRegression()
 
     def findCorrelation(self):
         correlation_with_closure = rawData.corr(numeric_only=True)[['Performance Index']].drop(index='Performance Index')
@@ -62,30 +62,33 @@ class StudentPerformanceModel:
             outliers = rawData[(rawData[column] < lower) | (rawData[column] > upper)]
             logging.debug(f"outliers for {column} is {outliers}")
             filteredData = rawData[(rawData[column] >= lower) & (rawData[column] <= upper)]
-            newColName = f"{column} Scaled"
-            self.cleanedData[newColName] = filteredData[column]
+            self.cleanedData[column] = filteredData[column]
             #print(self.cleanedData)
     
-    def scallingData(self, inputData):
+    def scallingData(self, inputData, fit=True):
         columnsHavingnums = inputData.select_dtypes(include=['int64','float64']).columns
-        for column in columnsHavingnums:
-            skewValue = inputData[column].skew()
-            if abs(skewValue) <= 0.5:
-                stdScaler = StandardScaler()
-            else:
-                stdScaler = RobustScaler()
-            self.scaledData = pd.DataFrame(stdScaler.fit_transform(inputData), columns=inputData.columns, index=inputData.index)
-            print(self.scaledData)
+        overallSkew = inputData[columnsHavingnums].skew().abs().mean()
+        if overallSkew <= 0.5:
+            scaler = StandardScaler()
+        else:
+            scaler = RobustScaler()
+        
+        if fit or self.scaler is None:
+            scaledData = pd.DataFrame(scaler.fit_transform(inputData), columns=inputData.columns, index=inputData.index)
+            self.scaler=scaler
+        else:
+            scaledData = pd.DataFrame(self.scaler.transform(inputData), columns=inputData.columns, index=inputData.index)
+        return scaledData
 
-    def multiLinearRegression(self, featureList, label):
-        x = self.scaledData[featureList]
-        y = self.scaledData[label]
+    def multiLinearRegression(self, scaledData1, featureList, label):
+        x = scaledData1[featureList]
+        y = scaledData1[label]
         xtrain, xtest, ytrain, ytest = train_test_split(x,y, test_size=0.2, random_state=10)
-        model.fit(xtrain,ytrain)
-        ypredit = model.predict(xtest)
-        print("Bo : ", model.intercept_)
-        print("Co Efficients", model.coef_)
-        print(f"{model.intercept_} + {model.coef_[0]}*X1 + {model.coef_[1]}*X2 + {model.coef_[2]}*X3 + {model.coef_[3]}*X4")
+        self.model.fit(xtrain,ytrain)
+        ypredit = self.model.predict(xtest)
+        print("Bo : ", self.model.intercept_)
+        print("Co Efficients", self.model.coef_)
+        print(f"{self.model.intercept_} + {self.model.coef_[0]}*X1 + {self.model.coef_[1]}*X2 + {self.model.coef_[2]}*X3 + {self.model.coef_[3]}*X4")
         print("Evaluation Metrics")
         print("MSE : ",mean_squared_error(ytest,ypredit))
         print("RMSE : ",root_mean_squared_error(ytest,ypredit))
@@ -97,8 +100,12 @@ class StudentPerformanceModel:
         plt.show()
     
     def predictPerformance(self, hoursStudied, PreviousScore, sleepHours, sampleQuesPaperPracticed):
-        x_user = pd.DataFrame([[hoursStudied,PreviousScore,sleepHours,sampleQuesPaperPracticed]])
-        final = model.predict(x_user)
+        x_user = pd.DataFrame(
+        [[hoursStudied, PreviousScore, sleepHours, sampleQuesPaperPracticed]],
+        columns=["Hours Studied", "Previous Scores", "Sleep Hours", "Sample Question Papers Practiced"]
+        )
+        xUserScaled = self.scallingData(x_user, fit=False)
+        final = self.model.predict(xUserScaled)
         print("Predicted Performance Index :", int(final[0]))
     
 if __name__=="__main__":
@@ -112,6 +119,12 @@ if __name__=="__main__":
         obj.calculateOutlier()
     else:
         obj.cleanedData = rawData
-    obj.scallingData(obj.cleanedData)
-    obj.multiLinearRegression(["Hours Studied Scaled", "Previous Scores Scaled", "Sleep Hours Scaled", "Sample Question Papers Practiced Scaled"],"Performance Index Scaled")
-    obj.predictPerformance(8,75,4,9)
+    # scaled_data = obj.scallingData(obj.cleanedData.drop(columns=["Performance Index"]), fit=True)
+    # obj.multiLinearRegression(scaled_data, ["Hours Studied", "Previous Scores", "Sleep Hours", "Sample Question Papers Practiced"],"Performance Index")
+    X = obj.cleanedData.drop(columns=["Performance Index"])
+    y = obj.cleanedData["Performance Index"]
+    scaled_X = obj.scallingData(X, fit=True)
+    scaled_data = scaled_X.copy()
+    scaled_data["Performance Index"] = y.values
+    obj.multiLinearRegression(scaled_data, ["Hours Studied", "Previous Scores", "Sleep Hours", "Sample Question Papers Practiced"], "Performance Index")
+    obj.predictPerformance(8,99,4,9)
