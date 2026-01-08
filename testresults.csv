@@ -1,0 +1,5 @@
+Test ID,Test Name,Module,Status,Automation Tool
+1,Manual_Login,iOS,Pass,NA
+2,Manual_Employee,iOS,Fail,NA
+3,Automated_Login,iOS,Pass,Selenium
+4,Automated_Employee,iOS,Fail,Playwright
