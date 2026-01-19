@@ -41,6 +41,29 @@ y_plane = model.predict(pd.DataFrame({'Test_Steps': x1_surf.ravel(), 'Avg_Page_L
 y_plane = y_plane.reshape(x1_surf.shape)
 
 ax.plot_surface(x1_surf, x2_surf, y_plane, color='red', alpha=0.3, label='Predicted Plane')
-ax.legend()
 
+# Add axis labels
+ax.set_xlabel('Test Steps', fontsize=12, fontweight='bold')
+ax.set_ylabel('Avg Page Load Time', fontsize=12, fontweight='bold')
+ax.set_zlabel('Execution Time', fontsize=12, fontweight='bold')
+ax.set_title('3D Linear Regression: Execution Time Prediction', fontsize=14, fontweight='bold', pad=20)
+
+# Add legend
+ax.legend(loc='upper left', fontsize=10)
+
+plt.tight_layout()
 plt.show()
+
+print("\n" + "="*50)
+print("Prediction for New Data")
+print("="*50)
+
+test_steps = float(input("Enter Test Steps: "))
+avg_page_load_time = float(input("Enter Average Page Load Time: "))
+
+user_input = pd.DataFrame({'Test_Steps': [test_steps], 'Avg_Page_Load_Time': [avg_page_load_time]})
+
+predicted_execution_time = model.predict(user_input)[0]
+
+print(f"\nFor Test_Steps = {test_steps} and Avg_Page_Load_Time = {avg_page_load_time}")
+print(f"Predicted Execution Time: {predicted_execution_time:.2f}")
